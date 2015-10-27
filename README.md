@@ -1,4 +1,4 @@
-# Medex
+# Medex [![Build Status](https://travis-ci.org/xerions/medex.svg)](https://travis-ci.org/xerions/medex)
 
 Medical Examination - application for register health check callbacks and represent their state via HTTP.
 
@@ -8,7 +8,7 @@ Medical Examination - application for register health check callbacks and repres
 
     ```elixir
     def deps do
-        [{:medex, github: "xerions/medex"}]
+      [{:medex, github: "xerions/medex"}]
     end
     ```
 
@@ -27,12 +27,12 @@ Register new check callback:
 
 ```elixir
 Medex.register "db", fn() ->
-        case :erlang.phash2(:erlang.now, 3) do
-            0 -> :ok
-            1 -> :warning
-            2 -> :critical
-        end
+    case :erlang.phash2(:erlang.now, 3) do
+      0 -> :ok
+      1 -> :warning
+      2 -> :critical
     end
+  end
 ```
 
 and get state
