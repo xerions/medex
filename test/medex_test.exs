@@ -20,6 +20,7 @@ defmodule MedexTest do
     Medex.register "db", fn -> :ok end
     Medex.register "api", fn -> :critical end
     Medex.register "frontent", fn -> :warning end
+    :timer.sleep(100)
     assert {:ok, {{_, 404, _}, _, _}} =  :httpc.request('http://localhost:4000/health/unknown')
     assert {:ok, {{_, 200, _}, _, _}} =  :httpc.request('http://localhost:4000/health/db')
     assert {:ok, {{_, 429, _}, _, _}} =  :httpc.request('http://localhost:4000/health/frontent')
