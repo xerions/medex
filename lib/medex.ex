@@ -19,6 +19,7 @@ defmodule Medex do
     case info(name) do
       [{^name, _, _, _}] -> :already_declared
       _ -> 
+        consul_register(name, opts)
         {:ok, pid} = Supervisor.start_child(Medex.Supervisor, [name, fun, interval(opts)])
         :ets.insert(Medex.Items, {name, pid, fun, :unknown})
     end
@@ -27,6 +28,7 @@ defmodule Medex do
   def unregister(name) do
    case info(name) do
      [{^name, pid, _, _}] ->
+        consul_unregister(name)
         Supervisor.terminate_child(Medex.Supervisor, pid)
         delete(name)
      _ -> :not_found
@@ -39,7 +41,30 @@ defmodule Medex do
   
   def delete(name), do: :ets.delete(Medex.Items, name)
 
+  def update_status(name, status), 
+    do: :ets.update_element(Medex.Items, name, {4, status})
+
+  def use_consul, 
+    do: Code.ensure_loaded?(Consul) and Application.get_env(:medex, :consul, false)
+
   defp host, do: Application.get_env(:medex, :ip)
   defp port, do: Application.get_env(:medex, :port)
-  defp interval(opts), do: opts[:interval] || 10
+  defp interval(opts), do: (opts[:interval] || Application.get_env :medex, :interval) || 10
+  defp service_id(opts), do: opts[:service_id] || Application.get_env :medex, :service_id
+
+  defp consul_register(name, opts) do
+    if use_consul do
+      body = %{
+        "Name": name,
+        "ServiceID": "#{service_id(opts)}",
+        "TTL": "#{interval(opts)}s"}
+      Consul.Agent.Check.register body
+    end
+  end
+
+  defp consul_unregister(name) do
+    if use_consul do
+      Consul.Agent.Check.deregister name
+    end
+  end
 end

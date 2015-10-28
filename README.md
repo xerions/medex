@@ -26,7 +26,7 @@ Medical Examination - application for register health check callbacks and repres
 Register new check callback:
 
 ```elixir
-Medex.register "db", fn() ->
+Medex.register "db", fn ->
     case :erlang.phash2(:erlang.now, 3) do
       0 -> :ok
       1 -> :warning
@@ -38,3 +38,15 @@ Medex.register "db", fn() ->
 and get state
 
     $ curl -v http://localhost:4000/health/db
+
+## Consul
+
+Medex suports pushing health check statutes to [Consul](https://www.consul.io/). It is desabled by default but you can turn it on:
+
+```elixir
+# use consul, false by default
+config :medex, consul: true
+
+# which service name will be using for consul health-checks (optional)
+config :medex, service_id: "service_example"
+```
