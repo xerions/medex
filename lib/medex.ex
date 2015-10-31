@@ -47,8 +47,8 @@ defmodule Medex do
   def use_consul, 
     do: Code.ensure_loaded?(Consul) and Application.get_env(:medex, :consul, false)
 
-  defp host, do: Application.get_env(:medex, :ip)
-  defp port, do: Application.get_env(:medex, :port)
+  defp host, do: Application.get_env(:medex, :ip) || "127.0.0.1"
+  defp port, do: Application.get_env(:medex, :port) || 4000
   defp interval(opts), do: (opts[:interval] || Application.get_env :medex, :interval) || 10
   defp service_id(opts), do: opts[:service_id] || Application.get_env :medex, :service_id
 
