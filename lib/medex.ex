@@ -50,6 +50,7 @@ defmodule Medex do
   defp host, do: Application.get_env(:medex, :ip) || "127.0.0.1"
   defp port, do: Application.get_env(:medex, :port) || 4000
   defp interval(opts), do: (opts[:interval] || Application.get_env :medex, :interval) || 10
+  defp consul_ttl(opts), do: opts[:consul_ttl] || interval(opts) + 2
   defp service_id(opts), do: opts[:service_id] || Application.get_env :medex, :service_id
 
   defp consul_register(name, opts) do
@@ -57,7 +58,7 @@ defmodule Medex do
       body = %{
         "Name": name,
         "ServiceID": "#{service_id(opts)}",
-        "TTL": "#{interval(opts)}s"}
+        "TTL": "#{consul_ttl(opts)}s"}
       Consul.Agent.Check.register body
     end
   end

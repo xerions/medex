@@ -41,7 +41,7 @@ and get state
 
 ## Consul
 
-Medex suports pushing health check statutes to [Consul](https://www.consul.io/). It is desabled by default but you can turn it on:
+Medex suports pushing health check statutes to [Consul](https://www.consul.io/). It is disabled by default but you can turn it on:
 
 ```elixir
 # use consul, false by default
@@ -50,3 +50,6 @@ config :medex, consul: true
 # which service name will be using for consul health-checks (optional)
 config :medex, service_id: "service_example"
 ```
+
+And ensure start of consul application.
+
